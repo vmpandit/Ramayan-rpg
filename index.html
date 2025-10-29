@@ -1,0 +1,2032 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>॥ श्री रामायणम् ॥ - The Ramayana RPG</title>
+    <style>
+        @keyframes scanline {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(100vh); }
+        }
+
+        @keyframes glow {
+            0%, 100% { text-shadow: 0 0 10px #fcd34d, 0 0 20px #fcd34d; }
+            50% { text-shadow: 0 0 20px #fcd34d, 0 0 40px #fcd34d; }
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: #0a0a0a;
+            color: #00ff00;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(transparent 50%, rgba(0, 255, 0, 0.03) 50%);
+            background-size: 100% 4px;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: rgba(0, 255, 0, 0.1);
+            animation: scanline 8s linear infinite;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .pixel-border {
+            border: 4px solid #00ff00;
+            padding: 20px;
+            background: rgba(0, 20, 0, 0.9);
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+        }
+
+        .main-menu {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .title {
+            font-size: 3em;
+            color: #fcd34d;
+            animation: glow 2s ease-in-out infinite;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+        }
+
+        .subtitle {
+            font-size: 1.5em;
+            color: #00ff00;
+            margin-bottom: 40px;
+            text-shadow: 0 0 10px #00ff00;
+        }
+
+        .menu-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            font-size: 1.2em;
+            font-family: 'Courier New', monospace;
+            background: #001100;
+            color: #00ff00;
+            border: 3px solid #00ff00;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: all 0.3s;
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+        }
+
+        .btn:hover {
+            background: #00ff00;
+            color: #000;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.8);
+            transform: scale(1.05);
+        }
+
+        .btn-secondary {
+            background: #110011;
+            color: #ff00ff;
+            border-color: #ff00ff;
+            box-shadow: 0 0 10px rgba(255, 0, 255, 0.3);
+        }
+
+        .btn-secondary:hover {
+            background: #ff00ff;
+            color: #000;
+            box-shadow: 0 0 20px rgba(255, 0, 255, 0.8);
+        }
+
+        .character-selection {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .character-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .character-card {
+            background: rgba(0, 20, 0, 0.9);
+            border: 3px solid #00ff00;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .character-card:hover {
+            border-color: #fcd34d;
+            box-shadow: 0 0 30px rgba(252, 211, 77, 0.5);
+            transform: translateY(-5px);
+        }
+
+        .character-name {
+            font-size: 1.8em;
+            color: #fcd34d;
+            margin-bottom: 10px;
+        }
+
+        .character-desc {
+            color: #00ff00;
+            margin: 15px 0;
+            line-height: 1.6;
+        }
+
+        .character-stats {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 2px solid #00ff00;
+            text-align: left;
+        }
+
+        .stat-line {
+            margin: 5px 0;
+            color: #00ff00;
+        }
+
+        .intro-screen {
+            padding: 40px;
+            text-align: center;
+        }
+
+        .intro-text {
+            color: #00ff00;
+            font-size: 1.2em;
+            line-height: 2;
+            margin: 30px 0;
+            text-align: left;
+        }
+
+        .dialogue {
+            background: rgba(252, 211, 77, 0.1);
+            border-left: 4px solid #fcd34d;
+            padding: 20px;
+            margin: 20px 0;
+            font-style: italic;
+        }
+
+        .dialogue-speaker {
+            color: #fcd34d;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .dialogue-text {
+            color: #00ff00;
+            line-height: 1.8;
+        }
+
+        .game-screen {
+            display: grid;
+            grid-template-columns: 250px 1fr 300px;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 1200px) {
+            .game-screen {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .game-header {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 20px;
+            background: rgba(0, 20, 0, 0.9);
+            border: 3px solid #00ff00;
+            margin-bottom: 20px;
+        }
+
+        .game-title {
+            font-size: 2em;
+            color: #fcd34d;
+            animation: glow 2s ease-in-out infinite;
+        }
+
+        .location-display {
+            font-size: 1.3em;
+            color: #00ff00;
+            margin-top: 10px;
+            text-shadow: 0 0 10px #00ff00;
+        }
+
+        .panel {
+            background: rgba(0, 20, 0, 0.9);
+            border: 3px solid #00ff00;
+            padding: 20px;
+            height: fit-content;
+        }
+
+        .panel-title {
+            color: #fcd34d;
+            font-size: 1.3em;
+            margin-bottom: 15px;
+            text-align: center;
+            text-shadow: 0 0 10px #fcd34d;
+        }
+
+        .resource {
+            margin: 15px 0;
+        }
+
+        .resource-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            color: #00ff00;
+        }
+
+        .resource-bar {
+            height: 20px;
+            background: #001100;
+            border: 2px solid #00ff00;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .resource-fill {
+            height: 100%;
+            transition: width 0.5s;
+        }
+
+        .energy-fill {
+            background: linear-gradient(90deg, #00ff00, #00cc00);
+        }
+
+        .favor-fill {
+            background: linear-gradient(90deg, #00ffff, #0088ff);
+        }
+
+        .tapas-fill {
+            background: linear-gradient(90deg, #ff00ff, #cc00ff);
+        }
+
+        .low-resource {
+            animation: glow 1s ease-in-out infinite;
+            color: #ff0000 !important;
+        }
+
+        .story-panel {
+            background: rgba(0, 20, 0, 0.9);
+            border: 3px solid #00ff00;
+            padding: 30px;
+            min-height: 500px;
+        }
+
+        .chapter-title {
+            font-size: 1.8em;
+            color: #fcd34d;
+            margin-bottom: 20px;
+            text-align: center;
+            animation: glow 2s ease-in-out infinite;
+        }
+
+        .verse {
+            background: rgba(255, 0, 255, 0.1);
+            border-left: 4px solid #ff00ff;
+            padding: 15px;
+            margin: 20px 0;
+            font-style: italic;
+        }
+
+        .verse-sanskrit {
+            color: #fcd34d;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .verse-translation {
+            color: #00ff00;
+        }
+
+        .story-text {
+            color: #00ff00;
+            line-height: 1.8;
+            margin: 20px 0;
+        }
+
+        .narrative-section {
+            background: rgba(0, 255, 255, 0.05);
+            border: 2px solid #00ffff;
+            padding: 20px;
+            margin: 20px 0;
+            line-height: 1.8;
+        }
+
+        .sage-teaching {
+            background: rgba(0, 255, 255, 0.1);
+            border: 3px solid #00ffff;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .sage-teaching h3 {
+            color: #00ffff;
+            margin-bottom: 10px;
+        }
+
+        .tutorial-box {
+            background: rgba(252, 211, 77, 0.1);
+            border: 3px dashed #fcd34d;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .tutorial-box h4 {
+            color: #fcd34d;
+            margin-bottom: 10px;
+        }
+
+        .choices {
+            margin-top: 30px;
+        }
+
+        .choice-btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            background: rgba(0, 20, 0, 0.9);
+            border: 2px solid #00ff00;
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+            font-size: 1em;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.3s;
+        }
+
+        .choice-btn:hover:not(:disabled) {
+            background: rgba(0, 255, 0, 0.2);
+            border-color: #fcd34d;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
+            transform: translateX(10px);
+        }
+
+        .choice-btn:disabled {
+            border-color: #ff0000;
+            color: #ff0000;
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .battle-screen {
+            background: rgba(139, 0, 0, 0.2);
+            border: 3px solid #ff0000;
+            padding: 30px;
+        }
+
+        .battle-title {
+            font-size: 2em;
+            color: #ff0000;
+            text-align: center;
+            margin-bottom: 20px;
+            animation: glow 1s ease-in-out infinite;
+        }
+
+        .weapon-selection {
+            background: rgba(139, 0, 0, 0.2);
+            border: 3px solid #ff00ff;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .weapon-selection h3 {
+            color: #ff00ff;
+            margin-bottom: 15px;
+        }
+
+        .weapon-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .astra-btn {
+            padding: 10px 15px;
+            margin: 5px;
+            background: rgba(0, 20, 0, 0.9);
+            border: 2px solid #fcd34d;
+            color: #fcd34d;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            transition: all 0.3s;
+        }
+
+        .astra-btn:hover:not(:disabled) {
+            background: rgba(252, 211, 77, 0.2);
+            box-shadow: 0 0 15px rgba(252, 211, 77, 0.5);
+            transform: scale(1.1);
+        }
+
+        .astra-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            border-color: #666;
+            color: #666;
+        }
+
+        .defend-btn {
+            padding: 10px 15px;
+            margin: 5px;
+            background: rgba(0, 20, 0, 0.9);
+            border: 2px solid #00ffff;
+            color: #00ffff;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            transition: all 0.3s;
+        }
+
+        .defend-btn:hover {
+            background: rgba(0, 255, 255, 0.2);
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
+            transform: scale(1.1);
+        }
+
+        .battle-log {
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid #00ff00;
+            padding: 15px;
+            max-height: 250px;
+            overflow-y: auto;
+            margin: 20px 0;
+            font-size: 0.9em;
+        }
+
+        .log-entry {
+            margin: 8px 0;
+            padding: 5px;
+            border-left: 3px solid #00ff00;
+            padding-left: 10px;
+        }
+
+        .battle-result {
+            background: rgba(0, 255, 0, 0.1);
+            border: 3px solid #00ff00;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+            font-size: 1.1em;
+        }
+
+        .feedback {
+            background: rgba(0, 255, 255, 0.1);
+            border: 3px solid #00ffff;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .feedback h3 {
+            color: #00ffff;
+            margin-bottom: 15px;
+        }
+
+        .death-screen {
+            background: rgba(139, 0, 0, 0.3);
+            border: 4px solid #ff0000;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .death-screen h2 {
+            color: #ff0000;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            animation: glow 1s ease-in-out infinite;
+        }
+
+        .lesson {
+            background: rgba(0, 0, 0, 0.5);
+            border: 2px solid #00ff00;
+            padding: 20px;
+            margin: 20px 0;
+            line-height: 1.8;
+        }
+
+        .warning-box {
+            background: rgba(255, 0, 0, 0.2);
+            border: 3px solid #ff0000;
+            padding: 20px;
+            margin: 20px 0;
+            animation: glow 2s ease-in-out infinite;
+        }
+
+        .warning-box h3 {
+            color: #ff0000;
+            margin-bottom: 10px;
+        }
+
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: rgba(0, 20, 0, 0.95);
+            border: 4px solid #00ff00;
+            padding: 30px;
+            max-width: 800px;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            color: #ff0000;
+            font-size: 2em;
+            cursor: pointer;
+        }
+
+        .glossary-entry {
+            margin: 15px 0;
+            padding: 15px;
+            background: rgba(0, 255, 0, 0.05);
+            border-left: 4px solid #00ff00;
+        }
+
+        .glossary-term {
+            color: #fcd34d;
+            font-size: 1.2em;
+            margin-bottom: 5px;
+        }
+
+        .glossary-pronunciation {
+            color: #ff00ff;
+            font-style: italic;
+            margin-bottom: 5px;
+        }
+
+        .glossary-definition {
+            color: #00ff00;
+            line-height: 1.6;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .mt-20 {
+            margin-top: 20px;
+        }
+
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #001100;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #00ff00;
+            border: 2px solid #001100;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="mainMenu" class="pixel-border">
+            <div class="main-menu">
+                <h1 class="title">॥ श्री रामायणम् ॥</h1>
+                <p class="subtitle">The Ramayana: Path of Dharma</p>
+                <p style="color: #00ff00; margin-bottom: 40px;">
+                    ⚡ AN INTERACTIVE JOURNEY ⚡<br>~ 80s RETRO EDITION ~<br>
+                    <small style="color: #fcd34d;">AUTHENTIC VALMIKI RAMAYANA</small><br>
+                    <small style="color: #00ffff;">v8.0 - ULTIMATE COMPLETE EDITION</small><br>
+                    <small style="color: #ff00ff;">WITH INTERACTIVE TUTORIAL</small>
+                </p>
+                <div class="menu-buttons">
+                    <button class="btn" onclick="showCharacterSelect()">▶ NEW GAME</button>
+                    <button class="btn" onclick="continueGame()" id="continueBtn" style="display: none;">⏩ CONTINUE</button>
+                    <button class="btn btn-secondary" onclick="showHowToPlay()">📖 HOW TO PLAY</button>
+                    <button class="btn btn-secondary" onclick="showGlossary()">📚 GLOSSARY</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="characterSelect" class="hidden pixel-border">
+            <div class="character-selection">
+                <h2 class="title">SELECT YOUR PATH</h2>
+                <p class="subtitle">Each character experiences the divine story differently</p>
+                <div class="character-grid">
+                    <div class="character-card" onclick="selectCharacter('rama')">
+                        <div class="character-name">श्री राम</div>
+                        <div class="character-desc">The ideal king, perfect son, embodiment of dharma.</div>
+                        <div class="character-stats">
+                            <div class="stat-line">⚔️ Dharma: ★★★★★</div>
+                            <div class="stat-line">👑 Leadership: ★★★★★</div>
+                            <div class="stat-line">📿 Path: RAJDHARMA</div>
+                        </div>
+                    </div>
+                    <div class="character-card" onclick="selectCharacter('sita')">
+                        <div class="character-name">माता सीता</div>
+                        <div class="character-desc">Divine mother, strength through devotion.</div>
+                        <div class="character-stats">
+                            <div class="stat-line">🙏 Devotion: ★★★★★</div>
+                            <div class="stat-line">✨ Purity: ★★★★★</div>
+                            <div class="stat-line">📿 Path: PATIVRATA DHARMA</div>
+                        </div>
+                    </div>
+                    <div class="character-card" onclick="selectCharacter('lakshmana')">
+                        <div class="character-name">लक्ष्मण</div>
+                        <div class="character-desc">Devoted brother, protector, selfless servant.</div>
+                        <div class="character-stats">
+                            <div class="stat-line">🛡️ Loyalty: ★★★★★</div>
+                            <div class="stat-line">⚔️ Protection: ★★★★★</div>
+                            <div class="stat-line">📿 Path: SEVA DHARMA</div>
+                        </div>
+                    </div>
+                    <div class="character-card" onclick="selectCharacter('hanuman')">
+                        <div class="character-name">हनुमान जी</div>
+                        <div class="character-desc">Mighty devotee, unlimited devotional power.</div>
+                        <div class="character-stats">
+                            <div class="stat-line">💖 Bhakti: ★★★★★</div>
+                            <div class="stat-line">💪 Strength: ★★★★★</div>
+                            <div class="stat-line">📿 Path: BHAKTI DHARMA</div>
+                        </div>
+                    </div>
+                </div>
+                <button class="btn mt-20" onclick="showMainMenu()">← BACK</button>
+            </div>
+        </div>
+
+        <div id="characterIntro" class="hidden pixel-border">
+            <div class="intro-screen">
+                <h2 class="title" id="introTitle">YOUR STORY BEGINS</h2>
+                <div id="introContent"></div>
+            </div>
+        </div>
+
+        <div id="gameScreen" class="hidden">
+            <div class="game-header pixel-border">
+                <h1 class="game-title">॥ श्री रामायणम् ॥</h1>
+                <div class="location-display" id="locationDisplay">TUTORIAL</div>
+                <div style="color: #00ff00; margin-top: 10px;">
+                    PLAYING AS: <span id="currentCharacter" style="color: #fcd34d;"></span>
+                </div>
+            </div>
+            <div class="game-screen">
+                <div class="panel">
+                    <div class="panel-title">⚡ RESOURCES ⚡</div>
+                    <div class="resource">
+                        <div class="resource-label">
+                            <span id="energyLabel">ENERGY</span>
+                            <span id="energyValue">100</span>
+                        </div>
+                        <div class="resource-bar">
+                            <div class="resource-fill energy-fill" id="energyBar" style="width: 100%"></div>
+                        </div>
+                    </div>
+                    <div class="resource">
+                        <div class="resource-label">
+                            <span>DIVINE FAVOR</span>
+                            <span id="favorValue">50</span>
+                        </div>
+                        <div class="resource-bar">
+                            <div class="resource-fill favor-fill" id="favorBar" style="width: 50%"></div>
+                        </div>
+                    </div>
+                    <div class="resource">
+                        <div class="resource-label">
+                            <span>TAPAS</span>
+                            <span id="tapasValue">0</span>
+                        </div>
+                        <div class="resource-bar">
+                            <div class="resource-fill tapas-fill" id="tapasBar" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    <div style="margin-top: 30px; padding-top: 20px; border-top: 2px solid #00ff00;">
+                        <div class="panel-title" style="font-size: 1.1em;">GUNAS</div>
+                        <div class="stat-line">SATTVA: <span id="sattvaValue">5</span></div>
+                        <div class="stat-line">RAJAS: <span id="rajasValue">5</span></div>
+                        <div class="stat-line">TAMAS: <span id="tamasValue">0</span></div>
+                    </div>
+                    <button class="btn mt-20" style="width: 100%; font-size: 0.9em;" onclick="showGlossary()">📚 GLOSSARY</button>
+                </div>
+                <div class="story-panel">
+                    <div class="chapter-title" id="chapterTitle">TUTORIAL 1</div>
+                    <div id="storyContent"></div>
+                </div>
+                <div class="panel">
+                    <div class="panel-title">⭐ CHARACTER ⭐</div>
+                    <div id="characterInfo"></div>
+                    <div style="margin-top: 30px; padding-top: 20px; border-top: 2px solid #00ff00;">
+                        <div class="panel-title" style="font-size: 1.1em;">KARMA</div>
+                        <div id="karmaDisplay"></div>
+                    </div>
+                    <div style="margin-top: 30px; padding-top: 20px; border-top: 2px solid #00ff00;">
+                        <div class="panel-title" style="font-size: 1.1em;">WEAPONS</div>
+                        <div id="weaponsDisplay">
+                            <p style="color: #ff00ff; font-style: italic;">BOW & ARROW</p>
+                        </div>
+                    </div>
+                    <div style="margin-top: 30px; padding-top: 20px; border-top: 2px solid #00ff00;">
+                        <div class="panel-title" style="font-size: 1.1em;">SAGE LESSONS</div>
+                        <div id="lessonsDisplay">
+                            <p style="color: #00ffff; font-style: italic;">NONE YET</p>
+                        </div>
+                    </div>
+                    <button class="btn mt-20" style="width: 100%; font-size: 0.9em;" onclick="saveGame()">💾 SAVE</button>
+                    <button class="btn btn-secondary mt-20" style="width: 100%; font-size: 0.9em;" onclick="showMainMenu()">← MENU</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="glossaryModal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal('glossaryModal')">✕</button>
+            <h2 class="title" style="font-size: 2em;">📚 GLOSSARY</h2>
+            <div id="glossaryContent"></div>
+        </div>
+    </div>
+
+    <div id="howToPlayModal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal('howToPlayModal')">✕</button>
+            <h2 class="title" style="font-size: 2em;">📖 HOW TO PLAY</h2>
+            <div id="howToPlayContent"></div>
+        </div>
+    </div>
+
+    <script>
+        // GLOBAL GAME STATE
+        let gameState = {
+            character: null,
+            currentChapter: -4, // START WITH TUTORIAL!
+            location: 'Tutorial',
+            resources: { energy: 100, favor: 50, tapas: 0 },
+            gunas: { sattva: 5, rajas: 5, tamas: 0 },
+            karma: { truth: 5, duty: 5, compassion: 5, wisdom: 5, courage: 5, selfControl: 5 },
+            weapons: ['Bow and Arrow'],
+            sageLesson: [],
+            choices: [],
+            unlockedPaths: [],
+            battleStats: { wins: 0, losses: 0 }
+        };
+
+        // BATTLE STATE
+        let battleState = {
+            active: false,
+            currentChapter: 0,
+            round: 1,
+            playerHealth: 100,
+            enemyHealth: 100,
+            playerDefending: false,
+            enemyDefending: false,
+            battleLog: []
+        };
+
+        // WEAPON DEFINITIONS
+        const astras = {
+            'Bow and Arrow': {
+                name: 'धनुष बाण (Bow & Arrow)',
+                power: 40,
+                color: '#8B4513',
+                description: 'Regular arrows',
+                nature: 'physical'
+            },
+            'Brahmastra': {
+                name: 'ब्रह्मास्त्र (Brahmastra)',
+                power: 100,
+                color: '#ffffff',
+                description: "Brahma's ultimate weapon",
+                nature: 'divine'
+            },
+            'Agneya': {
+                name: 'आग्नेयास्त्र (Agni Astra)',
+                power: 70,
+                color: '#ff4400',
+                description: 'Fire weapon',
+                nature: 'elemental'
+            },
+            'Varunastra': {
+                name: 'वरुणास्त्र (Varuna Astra)',
+                power: 65,
+                color: '#00aaff',
+                description: 'Water weapon',
+                nature: 'elemental'
+            },
+            'Vayavyastra': {
+                name: 'वायव्यास्त्र (Vayu Astra)',
+                power: 68,
+                color: '#aaffaa',
+                description: 'Wind weapon',
+                nature: 'elemental'
+            },
+            'Indrastra': {
+                name: 'इन्द्रास्त्र (Indra Astra)',
+                power: 75,
+                color: '#ffff00',
+                description: "Indra's thunderbolt",
+                nature: 'divine'
+            }
+        };
+
+        const demonWeapons = {
+            'Training Dummy': {
+                name: 'Training Dummy',
+                power: 15,
+                color: '#996633',
+                nature: 'practice'
+            },
+            'Maya Illusion': {
+                name: 'माया (Maya)',
+                power: 60,
+                color: '#ff00ff',
+                nature: 'illusion'
+            },
+            'Demon Claw': {
+                name: 'राक्षस नख (Claw)',
+                power: 50,
+                color: '#ff0000',
+                nature: 'physical'
+            },
+            'Dark Magic': {
+                name: 'तामसिक माया (Dark Magic)',
+                power: 75,
+                color: '#800080',
+                nature: 'dark'
+            },
+            'Nagapasha': {
+                name: 'नागपाश (Serpent Noose)',
+                power: 80,
+                color: '#00ff00',
+                nature: 'binding'
+            },
+            'Demon Army': {
+                name: 'राक्षस सेना (Horde)',
+                power: 85,
+                color: '#cc0000',
+                nature: 'demonic'
+            }
+        };
+
+        // CHARACTER INTRODUCTIONS
+        const characterIntros = {
+            rama: {
+                title: "RAMA'S PATH: THE IDEAL KING",
+                intro: `<div class="intro-text">
+                    <p>You are <strong style="color: #fcd34d;">Rama</strong>, eldest son of King Dasharatha of Ayodhya. You are the seventh avatar of Lord Vishnu.</p>
+                    <div class="dialogue">
+                        <div class="dialogue-speaker">King Dasharatha:</div>
+                        <div class="dialogue-text">"Rama, you are the perfect prince. You embody dharma itself."</div>
+                    </div>
+                    <p>Your story is one of <strong>sacrifice, duty, and dharma</strong>.</p>
+                    <div class="tutorial-box">
+                        <h4>🎮 TUTORIAL MODE:</h4>
+                        <p>The game begins with <strong>4 interactive tutorial chapters</strong> that teach you all game mechanics!</p>
+                        <p>You'll learn about resources, karma, combat, and strategy before the epic begins!</p>
+                    </div>
+                    <p style="margin-top: 20px;"><strong style="color: #fcd34d;">Remember:</strong> Always choose dharma!</p>
+                </div>`,
+                startButton: "BEGIN TUTORIAL"
+            },
+            sita: {
+                title: "SITA'S PATH: STRENGTH IN DEVOTION",
+                intro: `<div class="intro-text">
+                    <p>You are <strong style="color: #fcd34d;">Sita</strong>, princess of Mithila, Lakshmi incarnate.</p>
+                    <div class="dialogue">
+                        <div class="dialogue-speaker">King Janaka:</div>
+                        <div class="dialogue-text">"Sita, your strength is in devotion and purity."</div>
+                    </div>
+                    <div class="tutorial-box">
+                        <h4>🎮 TUTORIAL MODE:</h4>
+                        <p>Learn all game mechanics in 4 interactive chapters before the epic begins!</p>
+                    </div>
+                </div>`,
+                startButton: "BEGIN TUTORIAL"
+            },
+            lakshmana: {
+                title: "LAKSHMANA'S PATH: PERFECT SERVICE",
+                intro: `<div class="intro-text">
+                    <p>You are <strong style="color: #fcd34d;">Lakshmana</strong>, devoted brother of Rama.</p>
+                    <div class="dialogue">
+                        <div class="dialogue-speaker">You:</div>
+                        <div class="dialogue-text">"Brother, where you go, I go. I will protect Sita with my life."</div>
+                    </div>
+                    <div class="tutorial-box">
+                        <h4>🎮 TUTORIAL MODE:</h4>
+                        <p>Master game mechanics in 4 interactive tutorial chapters!</p>
+                    </div>
+                </div>`,
+                startButton: "BEGIN TUTORIAL"
+            },
+            hanuman: {
+                title: "HANUMAN'S PATH: UNLIMITED DEVOTION",
+                intro: `<div class="intro-text">
+                    <p>You are <strong style="color: #fcd34d;">Hanuman</strong>, son of Vayu, devoted to Rama.</p>
+                    <div class="dialogue">
+                        <div class="dialogue-speaker">You:</div>
+                        <div class="dialogue-text">"Jai Shri Ram! I can do the impossible for you!"</div>
+                    </div>
+                    <div class="tutorial-box">
+                        <h4>🎮 TUTORIAL MODE:</h4>
+                        <p>Learn all game systems in 4 interactive tutorial chapters!</p>
+                    </div>
+                </div>`,
+                startButton: "BEGIN TUTORIAL"
+            }
+        };
+
+        // GLOSSARY DATA
+        const glossary = {
+            dharma: {term: "Dharma (धर्म)", pronunciation: "DHAR-muh", definition: "Righteousness, duty, cosmic law. The foundation of this game!"},
+            tapas: {term: "Tapas (तपस्)", pronunciation: "TAH-puhs", definition: "Spiritual austerity and power gained through meditation and discipline."},
+            sattva: {term: "Sattva (सत्त्व)", pronunciation: "SUHT-vuh", definition: "Purity, clarity, harmony. The highest guna - strive for this!"},
+            rajas: {term: "Rajas (रजस्)", pronunciation: "RAH-juhs", definition: "Passion, activity, desire. Mixed quality - use wisely."},
+            tamas: {term: "Tamas (तमस्)", pronunciation: "TAH-muhs", definition: "Darkness, ignorance, inertia. Weakens you in battle - avoid this!"},
+            astra: {term: "Astra (अस्त्र)", pronunciation: "UHS-truh", definition: "Divine weapon invoked by sacred mantras. Cannot be wielded by impure hearts."},
+            brahmastra: {term: "Brahmastra (ब्रह्मास्त्र)", pronunciation: "bruh-MUH-struh", definition: "Ultimate weapon of Brahma. Most powerful astra."},
+            karma: {term: "Karma (कर्म)", pronunciation: "KUR-muh", definition: "Action and its consequences. Your choices create karma!"},
+            bhakti: {term: "Bhakti (भक्ति)", pronunciation: "BHUHK-tee", definition: "Pure devotion to the divine. Hanuman's greatest power."},
+            rajdharma: {term: "Rajdharma (राजधर्म)", pronunciation: "RAHJ-dhar-muh", definition: "Sacred duty of kings - ruling with dharma."},
+            pativrata: {term: "Pativrata (पतिव्रता)", pronunciation: "puh-tee-VRAH-tuh", definition: "Devoted wife with spiritual power through perfect devotion."},
+            seva: {term: "Seva (सेवा)", pronunciation: "SAY-vah", definition: "Selfless service without expectation of reward."},
+            maya: {term: "Maya (माया)", pronunciation: "MAH-yah", definition: "Illusion that deceives the senses. Demons use this!"},
+            indrajit: {term: "Indrajit (इन्द्रजित्)", pronunciation: "in-druh-JIT", definition: "Ravana's son, conqueror of Indra. LAKSHMANA defeats him."},
+            ramrajya: {term: "Ram Rajya (राम राज्य)", pronunciation: "RAHM RAHJ-yuh", definition: "Perfect golden age of Rama's rule - the goal!"}
+        };
+
+        function getAllChapters(character) {
+            return [
+                // TUTORIAL CHAPTERS (-4 to -1)
+                {
+                    id: -4,
+                    title: "TUTORIAL 1: BASIC MECHANICS",
+                    location: "TRAINING GROUNDS",
+                    verse: {sanskrit: "शिक्षा प्रथमः", translation: "Learning comes first"},
+                    text: `<div class="tutorial-box">
+                        <h4>🎮 WELCOME TO THE RAMAYANA RPG!</h4>
+                        <p>This tutorial will teach you everything you need to know!</p>
+                    </div>
+                    <p style="margin: 20px 0;">In this game, you manage <strong>3 RESOURCES:</strong></p>
+                    <div style="background: rgba(0,255,0,0.1); padding: 15px; margin: 10px 0; border: 2px solid #00ff00;">
+                        <p><strong style="color: #00ff00;">ENERGY:</strong> Used for actions and choices. Keep above 30 or you're weaker in battle! (Current: 100)</p>
+                    </div>
+                    <div style="background: rgba(0,255,255,0.1); padding: 15px; margin: 10px 0; border: 2px solid #00ffff;">
+                        <p><strong style="color: #00ffff;">DIVINE FAVOR:</strong> Gods' blessing. Acts as extra health in battles! (Current: 50)</p>
+                    </div>
+                    <div style="background: rgba(255,0,255,0.1); padding: 15px; margin: 10px 0; border: 2px solid #ff00ff;">
+                        <p><strong style="color: #ff00ff;">TAPAS:</strong> Spiritual power from meditation and austerity! (Current: 0)</p>
+                    </div>
+                    <p style="margin: 20px 0;">Every choice affects these resources! Look at the left panel to track them!</p>
+                    <div class="tutorial-box">
+                        <h4>⭐ HISTORICAL ACCURACY:</h4>
+                        <p>Throughout the game, you'll see <strong>⭐ stars</strong> marking choices that match what ACTUALLY happened in Valmiki's Ramayana!</p>
+                        <p>These are usually (but not always) the best dharmic choices!</p>
+                    </div>
+                    <p>Let's practice! Make your first choice:</p>`,
+                    choices: [
+                        {text: "Take a simple action (uses little energy)", effects: {energy: -5, favor: 5}, outcome: "Good! You spent 5 energy and gained 5 favor!"},
+                        {text: "Take a difficult action (uses more energy)", effects: {energy: -15, favor: 10}, outcome: "You spent 15 energy but gained 10 favor! High risk, high reward!"},
+                        {text: "Do nothing (conserve energy)", effects: {energy: 0, favor: -5}, outcome: "You conserved energy but lost favor! Sometimes inaction has consequences too!", lesson: "LESSON: Not acting can sometimes be worse than acting!"}
+                    ]
+                },
+                {
+                    id: -3,
+                    title: "TUTORIAL 2: GUNAS & KARMA",
+                    location: "TRAINING GROUNDS",
+                    verse: {sanskrit: "त्रिगुणः संसारः", translation: "Three qualities govern reality"},
+                    text: `<div class="tutorial-box">
+                        <h4>🎮 THE THREE GUNAS:</h4>
+                        <p>Every choice affects your spiritual qualities!</p>
+                    </div>
+                    <p style="margin: 20px 0;">The <strong>THREE GUNAS</strong> govern your nature:</p>
+                    <div style="background: rgba(0,255,0,0.1); padding: 15px; margin: 10px 0; border: 2px solid #00ff00;">
+                        <p><strong style="color: #00ff00;">SATTVA (सत्त्व):</strong> Purity, wisdom, clarity (GOOD! Current: ${gameState.gunas.sattva})</p>
+                        <p>High Sattva = Stronger in battle, better choices unlocked!</p>
+                    </div>
+                    <div style="background: rgba(255,165,0,0.1); padding: 15px; margin: 10px 0; border: 2px solid #ffaa00;">
+                        <p><strong style="color: #ffaa00;">RAJAS (रजस्):</strong> Passion, action, restlessness (MIXED! Current: ${gameState.gunas.rajas})</p>
+                        <p>Some Rajas is needed for action, but too much causes problems!</p>
+                    </div>
+                    <div style="background: rgba(139,0,0,0.2); padding: 15px; margin: 10px 0; border: 2px solid #ff0000;">
+                        <p><strong style="color: #ff0000;">TAMAS (तमस्):</strong> Darkness, ignorance, inertia (BAD! Current: ${gameState.gunas.tamas})</p>
+                        <p>⚠️ CRITICAL: Every point of Tamas weakens you 3% in battle!</p>
+                    </div>
+                    <p style="margin: 20px 0;">You also build <strong>6 KARMIC VIRTUES:</strong></p>
+                    <div style="background: rgba(0,255,255,0.1); padding: 15px; margin: 10px 0; border: 2px solid #00ffff;">
+                        <p><strong>TRUTH • DUTY • COMPASSION • WISDOM • COURAGE • SELF-CONTROL</strong></p>
+                        <p>Each virtue gives you +2 bonus damage in battle per point!</p>
+                        <p>Check the right panel to see your current karma!</p>
+                    </div>
+                    <p>Let's see how choices affect your gunas and karma:</p>`,
+                    choices: [
+                        {text: "Meditate peacefully (Sattvic action)", effects: {energy: -10, sattva: 2, wisdom: 1, selfControl: 1}, outcome: "Perfect! +2 Sattva, +1 Wisdom, +1 Self-Control! This is the dharmic path!"},
+                        {text: "Act impulsively (Rajasic action)", effects: {energy: -5, rajas: 2}, outcome: "+2 Rajas! Not terrible, but not ideal either. Balance is key!"},
+                        {text: "Give up and sleep (Tamasic action)", effects: {energy: -3, tamas: 2, favor: -10}, outcome: "⚠️ +2 TAMAS! You'll be 6% weaker in battles now! Avoid Tamas!", failState: true, lesson: "LESSON: Tamas weakens you! Every point = -3% battle strength!"}
+                    ]
+                },
+                {
+                    id: -2,
+                    title: "TUTORIAL 3: COMBAT TRAINING",
+                    location: "TRAINING GROUNDS",
+                    verse: {sanskrit: "युद्ध कला", translation: "The art of righteous warfare"},
+                    text: `<div class="tutorial-box">
+                        <h4>⚔️ BATTLE MECHANICS:</h4>
+                        <p>Now you'll learn how combat works!</p>
+                    </div>
+                    <p style="margin: 20px 0;">In battles, you'll face enemies using <strong>DIVINE WEAPONS (Astras)</strong>!</p>
+                    <div style="background: rgba(252,211,77,0.1); padding: 15px; margin: 10px 0; border: 2px solid #fcd34d;">
+                        <p><strong style="color: #fcd34d;">DAMAGE FORMULA:</strong></p>
+                        <p>Base Damage = Weapon Power + (Courage × 2) + (Duty × 2)</p>
+                        <p>× Energy Penalty (if Energy < 30: only 70% damage!)</p>
+                        <p>× Tamas Penalty (each Tamas point: -3% damage!)</p>
+                    </div>
+                    <div style="background: rgba(0,255,255,0.1); padding: 15px; margin: 10px 0; border: 2px solid #00ffff;">
+                        <p><strong style="color: #00ffff;">DEFEND OPTION:</strong></p>
+                        <p>You can DEFEND to reduce incoming damage by 50%!</p>
+                        <p>Use this when low on health or facing strong attacks!</p>
+                    </div>
+                    <p style="margin: 20px 0;">Current weapon: <strong style="color: #fcd34d;">धनुष बाण (Bow & Arrow)</strong> - Power: 40</p>
+                    <p>You'll learn divine astras from sages later in the game!</p>
+                    <div class="tutorial-box">
+                        <h4>💡 PRO TIP:</h4>
+                        <p>High Courage + Duty karma = Much stronger in battle!</p>
+                        <p>Keep Energy above 30 or you fight at 70% strength!</p>
+                        <p>Every point of Tamas = -3% damage! Stay pure!</p>
+                    </div>
+                    <p>Ready to practice? Let's fight a training dummy!</p>`,
+                    battle: {enemy: "Training Dummy", enemyWeapon: "Training Dummy", difficulty: "tutorial"},
+                    choices: [
+                        {text: "⚔️ BEGIN PRACTICE BATTLE!", effects: {courage: 1}, outcome: "Entering combat training!", battle: true}
+                    ]
+                },
+                {
+                    id: -1,
+                    title: "TUTORIAL 4: STRATEGY & WISDOM",
+                    location: "TRAINING GROUNDS",
+                    verse: {sanskrit: "ज्ञानं परमं बलम्", translation: "Wisdom is the supreme strength"},
+                    text: `<div class="tutorial-box">
+                        <h4>📿 SAGE TEACHINGS:</h4>
+                        <p>Throughout your journey, you'll meet great sages!</p>
+                    </div>
+                    <p style="margin: 20px 0;">Sages like <strong>Vishwamitra, Valmiki, Agastya</strong> will teach you dharmic wisdom!</p>
+                    <div style="background: rgba(0,255,255,0.1); padding: 15px; margin: 10px 0; border: 2px solid #00ffff;">
+                        <p><strong style="color: #00ffff;">SAGE LESSONS UNLOCK:</strong></p>
+                        <p>🔓 New dialogue choices</p>
+                        <p>🔓 Special story paths</p>
+                        <p>🔓 Divine weapons (Astras)</p>
+                        <p>🔓 Strategic advantages</p>
+                        <p>Check the right panel to see what you've learned!</p>
+                    </div>
+                    <div class="tutorial-box">
+                        <h4>💡 STRATEGY GUIDE:</h4>
+                        <p><strong>1. Resource Management:</strong> Keep Energy above 30! Divine Favor is extra health in battle!</p>
+                        <p><strong>2. Build Karma:</strong> Focus on Courage & Duty for battle power! Wisdom unlocks better choices!</p>
+                        <p><strong>3. Maximize Sattva:</strong> High purity = stronger overall! Avoid Tamas at all costs!</p>
+                        <p><strong>4. Learn from Sages:</strong> Meditate when offered! Unlocked paths are powerful!</p>
+                        <p><strong>5. In Combat:</strong> Use DEFEND when health is low! Match weapons to enemies!</p>
+                    </div>
+                    <div style="background: rgba(252,211,77,0.1); padding: 20px; margin: 20px 0; border: 3px solid #fcd34d;">
+                        <p style="text-align: center; font-size: 1.2em;"><strong style="color: #fcd34d;">🌟 TUTORIAL COMPLETE! 🌟</strong></p>
+                        <p style="margin-top: 15px; text-align: center;">You now understand:</p>
+                        <p>✓ Resources (Energy, Divine Favor, Tapas)</p>
+                        <p>✓ Gunas (Sattva, Rajas, Tamas)</p>
+                        <p>✓ Karma (6 Virtues)</p>
+                        <p>✓ Combat System</p>
+                        <p>✓ Sage Teachings</p>
+                        <p style="margin-top: 15px; text-align: center; color: #fcd34d; font-size: 1.1em;">The epic story begins next!</p>
+                    </div>`,
+                    choices: [
+                        {text: "⚡ BEGIN THE RAMAYANA! ⚡", effects: {energy: -5, sattva: 2, wisdom: 2}, outcome: "Tutorial complete! The journey to dharma begins!"}
+                    ]
+                }
+            ],
+                // STORY CHAPTERS (0-21) - All 22 chapters
+                {
+                    id: 0,
+                    title: "CHAPTER 1: THE CORONATION",
+                    location: "AYODHYA PALACE",
+                    verse: {sanskrit: "रामो विग्रहवान् धर्मः", translation: "Rama is dharma personified"},
+                    text: "King Dasharatha announces you will be crowned tomorrow! The kingdom rejoices!",
+                    choices: [
+                        {text: "⭐ Accept humbly", effects: {energy: -5, favor: 10, sattva: 2, duty: 1}, outcome: "Perfect humility! The kingdom loves you more!"},
+                        {text: "Express restrained joy", effects: {energy: -3, favor: 8, selfControl: 1}, outcome: "Perfect balance! Appropriate response!"},
+                        {text: "Refuse out of modesty", effects: {energy: -10, favor: -5, tamas: 1}, outcome: "False modesty isn't dharma!", failState: true, lesson: "LESSON: Accepting rightful duty is dharma, not refusing it."}
+                    ]
+                },
+                {
+                    id: 1,
+                    title: "CHAPTER 2: THE DEMAND",
+                    location: "KAIKEYI'S CHAMBERS",
+                    verse: {sanskrit: "कैकेयी क्रोधसंयुक्ता", translation: "Kaikeyi, filled with anger"},
+                    text: "Your father weeps! Kaikeyi demands: Bharata as king, YOU exiled 14 years!",
+                    choices: [
+                        {text: "⭐ Accept immediately with composure", effects: {energy: -10, favor: 20, sattva: 3, duty: 2}, outcome: "Your perfection silences the room! Maryada Purushottam!"},
+                        {text: "Question if this is dharmic", effects: {energy: -15, favor: -10, tamas: 1}, outcome: "A king's word is absolute!", failState: true, lesson: "LESSON: Honor promises even when painful."},
+                        {text: "Console father then accept", effects: {energy: -8, favor: 15, compassion: 2}, outcome: "Your compassion heals his heart!"}
+                    ]
+                },
+                {
+                    id: 2,
+                    title: "CHAPTER 3: INTO EXILE",
+                    location: "LEAVING AYODHYA",
+                    verse: {sanskrit: "वनं गच्छामि", translation: "I go to the forest"},
+                    text: "You leave the palace. Thousands weep! Sita and Lakshmana insist on joining you.",
+                    choices: [
+                        {text: "Leave quietly before dawn", effects: {energy: -10, favor: 10, compassion: 2}, outcome: "The city sleeps in peace."},
+                        {text: "⭐ Bless the people one last time", effects: {energy: -15, favor: 20, sattva: 3}, outcome: "Thousands bow as you pass! Your blessing remains!"},
+                        {text: "Leave without ceremony", effects: {energy: -5, favor: 5}, outcome: "People feel abandoned. Ritual matters."}
+                    ]
+                },
+                {
+                    id: 3,
+                    title: "CHAPTER 4: SAGE'S GIFTS",
+                    location: "VISHWAMITRA'S ASHRAM",
+                    verse: {sanskrit: "ब्रह्मास्त्रं प्राप्नोति", translation: "He receives the Brahmastra"},
+                    text: "Sage Vishwamitra teaches you divine astras - weapons of the gods!",
+                    sageTeaching: {sage: "Vishwamitra", lesson: "dharmic-warfare", teaching: "Weapons only for dharma, never pride!"},
+                    choices: [
+                        {text: "⭐ Meditate deeply, learn humbly", effects: {energy: -20, tapas: 20, sattva: 4, wisdom: 3}, outcome: "All astras revealed! Divine weapons are yours!", unlocks: ['dharmic-warfare'], weapons: ['Brahmastra', 'Agneya', 'Varunastra', 'Vayavyastra', 'Indrastra']},
+                        {text: "Learn quickly, eager for power", effects: {energy: -15, rajas: 3, tamas: 2}, outcome: "Astras don't respond to eagerness!", failState: true, lesson: "LESSON: Spiritual weapons need spiritual discipline."},
+                        {text: "Ask about ethics of warfare", effects: {energy: -15, tapas: 15, wisdom: 4}, outcome: "Deep wisdom gained!", unlocks: ['dharmic-warfare'], weapons: ['Brahmastra', 'Agneya', 'Varunastra', 'Vayavyastra', 'Indrastra']}
+                    ]
+                },
+                {
+                    id: 4,
+                    title: "CHAPTER 5: THE DEMONESS",
+                    location: "PANCHAVATI FOREST",
+                    verse: {sanskrit: "शूर्पणखा राक्षसी", translation: "Shurpanakha the demoness"},
+                    text: "Demon woman Shurpanakha tries to seduce you, then threatens Sita!",
+                    choices: [
+                        {text: "⭐ Reject firmly but kindly", effects: {energy: -5, favor: 10, selfControl: 2}, outcome: "Perfect restraint! Maryada Purushottam!"},
+                        {text: "Have Lakshmana drive her away", effects: {energy: -3, favor: 8}, outcome: "She flees vowing revenge!"},
+                        {text: "Attack immediately", effects: {energy: -10, favor: -5, rajas: 2}, outcome: "Too hasty! Patience is stronger!", lesson: "LESSON: Unnecessary violence creates worse problems."}
+                    ]
+                },
+                {
+                    id: 5,
+                    title: "CHAPTER 6: GOLDEN DEER",
+                    location: "PANCHAVATI",
+                    verse: {sanskrit: "मरीचो मायया", translation: "Maricha through illusion"},
+                    text: "Sita sees a beautiful golden deer! Could this be a trap?",
+                    choices: [
+                        {text: "Trust instinct - refuse to chase", effects: {favor: 15, wisdom: 3}, outcome: "You see through maya! Sita safe!", skipNextChapter: true},
+                        {text: "⭐ Chase it to make Sita happy", effects: {energy: -15, favor: -5}, outcome: "It's a trap! You're led far away... but Sita's happiness matters."},
+                        {text: "Ask Lakshmana first", effects: {wisdom: 2}, outcome: "'It's maya,' he warns. But Sita insists..."}
+                    ]
+                },
+                {
+                    id: 6,
+                    title: "CHAPTER 7: SITA TAKEN",
+                    location: "TRAGEDY",
+                    verse: {sanskrit: "रावणो सीतां जहार", translation: "Ravana took Sita"},
+                    text: "SITA IS GONE! Ravana has taken her! Your world collapses!",
+                    choices: [
+                        {text: "⭐ Grieve but remain focused", effects: {energy: -20, favor: 20, sattva: 3, selfControl: 3}, outcome: "'I will find her!' Pain fuels purpose!"},
+                        {text: "Despair and blame yourself", effects: {energy: -30, favor: -10, tamas: 3}, outcome: "Despair serves nothing!", failState: true, lesson: "LESSON: Transform grief into action."},
+                        {text: "Immediately track her", effects: {energy: -15, favor: 10, courage: 2}, outcome: "You find her jewelry trail!"}
+                    ]
+                },
+                {
+                    id: 7,
+                    title: "CHAPTER 8: THE DEVOTEE",
+                    location: "RISHYAMUKHA MOUNTAIN",
+                    verse: {sanskrit: "हनुमान् श्रीमान्", translation: "Hanuman the glorious"},
+                    text: "Mighty vanara Hanuman bows: 'I am your servant, Lord!'",
+                    choices: [
+                        {text: "Accept with gratitude", effects: {energy: -5, favor: 15, compassion: 2}, outcome: "He pledges unlimited strength!"},
+                        {text: "Test his devotion", effects: {energy: -10, favor: 5, wisdom: 1}, outcome: "He proves himself beyond doubt!"},
+                        {text: "⭐ Embrace him as brother", effects: {energy: -8, favor: 20, compassion: 3}, outcome: "Hanuman weeps with joy! Eternal bond!"}
+                    ]
+                },
+                {
+                    id: 8,
+                    title: "CHAPTER 9: MONKEY KING",
+                    location: "KISHKINDHA",
+                    verse: {sanskrit: "सुग्रीवेण सह सख्यं", translation: "Friendship with Sugriva"},
+                    text: "Sugriva offers: Help him defeat Vali, get his army to find Sita!",
+                    choices: [
+                        {text: "⭐ Agree to help", effects: {energy: -10, favor: 15, duty: 2}, outcome: "Alliance formed!"},
+                        {text: "Ask why Vali wronged him", effects: {energy: -8, favor: 12, wisdom: 3}, outcome: "Satisfied it's just, you agree!"},
+                        {text: "Refuse - focus on Sita only", effects: {energy: -5, favor: -10, tamas: 2}, outcome: "You lose powerful ally!", failState: true, lesson: "LESSON: Helping others helps yourself."}
+                    ]
+                },
+                {
+                    id: 9,
+                    title: "CHAPTER 10: THE DUEL",
+                    location: "VALI BATTLE",
+                    verse: {sanskrit: "वालिनं हत्वा", translation: "Having slain Vali"},
+                    text: "Sugriva fights Vali! Should you shoot from hiding or face him openly?",
+                    choices: [
+                        {text: "⭐ Shoot from hiding as promised", effects: {energy: -15, favor: 10, duty: 2}, outcome: "Vali falls! Promise kept!", battle: {enemy: "Vali", enemyWeapon: "Demon Claw", skipBattle: true}},
+                        {text: "Challenge Vali to fair combat", effects: {energy: -20, favor: 15, truth: 2, courage: 2}, outcome: "You defeat him honorably!", battle: {enemy: "Vali", enemyWeapon: "Demon Claw", difficulty: "hard"}},
+                        {text: "Try to mediate", effects: {energy: -10, favor: -5}, outcome: "Vali laughs and attacks!", failState: true, lesson: "LESSON: Sometimes dharma requires force."}
+                    ]
+                },
+                {
+                    id: 10,
+                    title: "CHAPTER 11: IMPOSSIBLE LEAP",
+                    location: "SOUTHERN OCEAN",
+                    verse: {sanskrit: "हनुमान् समुद्रं लङ्घयित्वा", translation: "Hanuman leaped the ocean"},
+                    text: character === 'hanuman' ? "100 yojanas to Lanka! You cry 'JAI SHRI RAM!' and GROW!" : "Hanuman steps forward: 'I will find Sita!'",
+                    choices: character === 'hanuman' ? [
+                        {text: "⭐ Chant Rama's name and LEAP!", effects: {energy: -20, favor: 30, tapas: 20, sattva: 4}, outcome: "JAI SHRI RAM! You SOAR across the ocean!"},
+                        {text: "Calculate if possible", effects: {energy: -15, rajas: 2, tamas: 1}, outcome: "Doubt weakens you!", failState: true, lesson: "LESSON: Pure devotion transcends physics."},
+                        {text: "Ask Rama's blessing", effects: {energy: -15, favor: 25, tapas: 15}, outcome: "Blessed, you SOAR across!"}
+                    ] : [
+                        {text: "⭐ Bless Hanuman", effects: {energy: -15, favor: 20, tapas: 15}, outcome: "He ROARS and leaps!"},
+                        {text: "Have faith", effects: {energy: -5, favor: 15, sattva: 2}, outcome: "Your confidence empowers him!"}
+                    ]
+                },
+                {
+                    id: 11,
+                    title: "CHAPTER 12: GARDEN OF SORROW",
+                    location: "ASHOKA VATIKA",
+                    verse: {sanskrit: "सीतां दृष्ट्वा", translation: "Seeing Sita"},
+                    text: character === 'hanuman' ? "You find her! Tiny, you whisper: 'Mother, I'm Rama's servant!'" : character === 'sita' ? "A tiny monkey appears: 'Jai Shri Ram!' Shows Rama's ring!" : "You wait anxiously...",
+                    choices: character === 'hanuman' ? [
+                        {text: "⭐ Give Rama's ring and message", effects: {energy: -10, favor: 25, compassion: 3}, outcome: "She gives you her hairpin as proof!"},
+                        {text: "Offer to carry her back", effects: {energy: -15, favor: 15}, outcome: "'Rama must rescue me himself,' she says gently."},
+                        {text: "Kill all guards", effects: {energy: -20, favor: -5, rajas: 3}, outcome: "Too loud! Army alerted!", failState: true, lesson: "LESSON: Wisdom chooses right moment."}
+                    ] : character === 'sita' ? [
+                        {text: "⭐ Trust Hanuman completely", effects: {energy: -5, favor: 20, sattva: 3}, outcome: "You give him your hairpin!"},
+                        {text: "Ask about Rama", effects: {energy: -8, favor: 15, compassion: 3}, outcome: "He suffers but never loses hope!"}
+                    ] : [
+                        {text: "⭐ Wait with trust", effects: {energy: -10, favor: 15, selfControl: 2}, outcome: "Hanuman returns! She lives!"}
+                    ]
+                },
+                {
+                    id: 12,
+                    title: "CHAPTER 13: BURNING LANKA",
+                    location: "LANKA CITY",
+                    verse: {sanskrit: "लङ्कां दग्ध्वा", translation: "Having burned Lanka"},
+                    text: character === 'hanuman' ? "They set your tail on fire! FOOLS! Now you'll burn their city!" : "Hanuman is DESTROYING Lanka!",
+                    choices: character === 'hanuman' ? [
+                        {text: "⭐ Burn only military targets", effects: {energy: -15, favor: 20, compassion: 3, wisdom: 2}, outcome: "Dharmic warfare! No innocents harmed!"},
+                        {text: "Burn EVERYTHING!", effects: {energy: -20, favor: -10, rajas: 4}, outcome: "Too much destruction!", failState: true, lesson: "LESSON: Protect innocents even against enemies."},
+                        {text: "Burn strategic targets", effects: {energy: -18, favor: 25, courage: 3}, outcome: "Perfect! 'Rama is coming!'"}
+                    ] : [
+                        {text: "⭐ Approve strategic destruction", effects: {energy: -5, favor: 15, wisdom: 2}, outcome: "His wisdom impresses you!"}
+                    ]
+                },
+                {
+                    id: 13,
+                    title: "CHAPTER 14: THE BRIDGE",
+                    location: "SOUTHERN OCEAN",
+                    verse: {sanskrit: "नलसेतुः", translation: "Nala's bridge"},
+                    text: "Build bridge to Lanka! Ocean god: 'I cannot support unless sanctified!'",
+                    choices: [
+                        {text: "⭐ Write Rama's name on stones", effects: {energy: -20, tapas: 25, sattva: 4}, outcome: "Stones FLOAT! Divine name makes impossible possible!"},
+                        {text: "Perform yajna blessing", effects: {energy: -25, tapas: 20, sattva: 3}, outcome: "Ocean grants permission!"},
+                        {text: "Command ocean by force", effects: {energy: -30, favor: -10, rajas: 3}, outcome: "Cannot command nature by force!", failState: true, lesson: "LESSON: Work WITH elements."}
+                    ]
+                },
+                {
+                    id: 14,
+                    title: "CHAPTER 15: RIGHTEOUS DEMON",
+                    location: "RAMA'S CAMP",
+                    verse: {sanskrit: "विभीषणः शरणं गतः", translation: "Vibhishana sought refuge"},
+                    text: "Vibhishana, Ravana's brother! 'I choose dharma. Give me refuge.'",
+                    choices: [
+                        {text: "⭐ Accept immediately", effects: {energy: -10, favor: 25, compassion: 4, sattva: 3}, outcome: "'Anyone choosing dharma is my brother!' Greatest ally!"},
+                        {text: "Test him first", effects: {energy: -15, favor: 15, wisdom: 3}, outcome: "He proves sincere! Trust, verify."},
+                        {text: "Reject - never trust demons", effects: {energy: -5, favor: -15, tamas: 3}, outcome: "Lost valuable ally!", failState: true, lesson: "LESSON: Judge by character, not birth."}
+                    ]
+                },
+                {
+                    id: 15,
+                    title: "CHAPTER 16: WAR BEGINS",
+                    location: "LANKA BATTLEFIELD",
+                    verse: {sanskrit: "युद्धं तुमुलम्", translation: "Tumultuous war"},
+                    text: "Great war begins! Demons vs your vanara army!",
+                    choices: [
+                        {text: "⭐ Lead from the front", effects: {energy: -20, favor: 25, courage: 4}, outcome: "'Where Rama goes, victory follows!'", battle: {enemy: "Demon Horde", enemyWeapon: "Demon Army", difficulty: "medium"}},
+                        {text: "Command strategically", effects: {energy: -15, favor: 15, wisdom: 3}, outcome: "Tactical brilliance!", battle: {enemy: "Demon Horde", enemyWeapon: "Demon Army", difficulty: "easy"}},
+                        {text: "Fight recklessly", effects: {energy: -30, favor: -10, rajas: 4}, outcome: "Foolish! No strategy!", failState: true, lesson: "LESSON: Courage needs wisdom."}
+                    ]
+                },
+                {
+                    id: 16,
+                    title: "CHAPTER 17: SLEEPING GIANT",
+                    location: "KUMBHAKARNA BATTLE",
+                    verse: {sanskrit: "कुम्भकर्णो महावीर्यः", translation: "Kumbhakarna of great valor"},
+                    text: "Ravana wakes Kumbhakarna - giant who sleeps 6 months! Nearly invincible!",
+                    battle: {enemy: "Kumbhakarna", enemyWeapon: "Demon Claw", difficulty: "hard"},
+                    choices: [
+                        {text: "⚔️ Fight with full divine power!", effects: {energy: -25, favor: 30, courage: 4}, outcome: "Brahmastra unleashed! Giant falls!", battle: true}
+                    ]
+                },
+                {
+                    id: 17,
+                    title: "CHAPTER 18: DARK SORCERER",
+                    location: "INDRAJIT BATTLE",
+                    verse: {sanskrit: "इन्द्रजित् मायया", translation: "Indrajit with illusion"},
+                    text: character === 'lakshmana' ? "INDRAJIT! His Nagapasha binds you and Rama! Garuda frees you! NOW - YOU face him alone!" : "Indrajit binds you! Garuda saves! Lakshmana must face him!",
+                    battle: character === 'lakshmana' ? {enemy: "Indrajit", enemyWeapon: "Dark Magic", difficulty: "very_hard"} : null,
+                    choices: character === 'lakshmana' ? [
+                        {text: "⭐ Fight with devotion to Rama!", effects: {energy: -30, favor: 35, courage: 5, duty: 4}, outcome: "Pure devotion sees through maya! Indrajit falls!", battle: true}
+                    ] : [
+                        {text: "⭐ Have faith in Lakshmana", effects: {energy: -10, favor: 20, compassion: 3}, outcome: "Your faith strengthens him! He wins!"}
+                    ]
+                },
+                {
+                    id: 18,
+                    title: "CHAPTER 19: THE DEMON KING",
+                    location: "FINAL DUEL",
+                    verse: {sanskrit: "रामरावणयोः युद्धम्", translation: "Battle of Rama and Ravana"},
+                    text: character === 'rama' ? "RAVANA! Ten heads! Twenty arms! Master of Vedas but used power for evil! Dharma vs Adharma!" : "Rama faces Ravana! Ultimate battle!",
+                    battle: character === 'rama' ? {enemy: "Ravana", enemyWeapon: "Dark Magic", difficulty: "ultimate"} : null,
+                    choices: character === 'rama' ? [
+                        {text: "⭐ Brahmastra to his heart!", effects: {energy: -40, favor: 50, courage: 5, duty: 5}, outcome: "Ten heads fall! Ravana collapses! VICTORY!", battle: true}
+                    ] : [
+                        {text: "⭐ Pray for victory", effects: {energy: -15, favor: 30, compassion: 4}, outcome: "Prayers strengthen Rama! Demon king falls!"}
+                    ]
+                },
+                {
+                    id: 19,
+                    title: "CHAPTER 20: AGNI PARIKSHA",
+                    location: "SITA'S TEST",
+                    verse: {sanskrit: "अग्निपरीक्षा", translation: "Test by fire"},
+                    text: character === 'rama' ? "Sita free! But people question her purity. Your heart knows truth, but duty as king..." : character === 'sita' ? "Rescued! But you see doubt. You'll prove purity!" : "Mother Sita must prove herself?",
+                    choices: character === 'rama' ? [
+                        {text: "Trust Sita completely", effects: {energy: -10, favor: 20, compassion: 4, truth: 3}, outcome: "'I know my Sita! No proof needed!'", skipNextChoice: true},
+                        {text: "⭐ Allow Agni Pariksha for dharma", effects: {energy: -20, favor: 10, duty: 3}, outcome: "Heavy heart. She enters fire - emerges unburnt! Agni proclaims purity!"},
+                        {text: "Publicly doubt her", effects: {energy: -15, favor: -20, tamas: 4}, outcome: "Her heart breaks!", failState: true, lesson: "LESSON: Sometimes dharma is gentleness."}
+                    ] : character === 'sita' ? [
+                        {text: "⭐ Enter fire with faith", effects: {energy: -20, favor: 40, sattva: 5}, outcome: "Flames don't burn you! Purity proven!"},
+                        {text: "Refuse - purity needs no proof", effects: {energy: -10, favor: 15, truth: 2}, outcome: "Your righteousness validated!"}
+                    ] : [
+                        {text: "⭐ Support Mother Sita", effects: {energy: -10, favor: 20, compassion: 3}, outcome: "Your loyalty strengthens her!"}
+                    ]
+                },
+                {
+                    id: 20,
+                    title: "CHAPTER 21: THE RETURN",
+                    location: "AYODHYA CORONATION",
+                    verse: {sanskrit: "अयोध्यां प्रति गच्छति", translation: "Returns to Ayodhya"},
+                    text: "After 14 years, home! Bharata waited, guarding your throne! Kingdom weeps with joy!",
+                    choices: [
+                        {text: "Accept crown humbly", effects: {energy: -10, favor: 40, sattva: 5}, outcome: "'I serve dharma and kingdom!' Perfect!"},
+                        {text: "⭐ Honor Bharata's sacrifice first", effects: {energy: -15, favor: 45, compassion: 5, wisdom: 3}, outcome: "'BHARATA, your dharma was hardest!' Kingdom weeps at brotherly love!"},
+                        {text: "Celebrate immediately", effects: {energy: -20, favor: 30, rajas: 3}, outcome: "Joy erupts! But restraint in celebration too!"}
+                    ]
+                },
+                {
+                    id: 21,
+                    title: "CHAPTER 22: RAM RAJYA",
+                    location: "PERFECT KINGDOM",
+                    verse: {sanskrit: "रामराज्यं सुखदं सर्वेषां", translation: "Ram Rajya brings happiness to all"},
+                    text: "Perfect dharma reign! No crime, no suffering! You've not just saved a kingdom but established ideal civilization inspiring millennia! Victory over adharma itself!\n\n॥ जय श्री राम ॥",
+                    choices: [
+                        {text: "⭐ Complete Journey - View Stats", effects: {favor: 100, sattva: 10}, outcome: generateEndingText(), isEnding: true}
+                    ]
+                }
+            ];
+        }
+
+        function generateEndingText() {
+            const stats = gameState;
+            let dharmaScore = stats.gunas.sattva * 5 + stats.karma.truth + stats.karma.duty + stats.karma.compassion + stats.karma.wisdom + stats.karma.courage + stats.karma.selfControl - (stats.gunas.tamas * 3);
+            
+            let text = `<div style="background: rgba(0,255,0,0.1); border: 3px solid #fcd34d; padding: 30px;">`;
+            text += `<h2 style="color: #fcd34d; text-align: center; font-size: 2em;">॥ JOURNEY COMPLETE ॥</h2>`;
+            text += `<p style="text-align: center; margin: 20px 0; color: #00ff00;">You completed the eternal Ramayana!</p>`;
+            
+            text += `<div style="border-top: 2px solid #00ff00; padding-top: 20px; margin-top: 20px; color: #00ff00;">`;
+            text += `<h3 style="color: #00ffff;">FINAL KARMA:</h3>`;
+            text += `<p>Truth: ${stats.karma.truth}/10 | Duty: ${stats.karma.duty}/10 | Compassion: ${stats.karma.compassion}/10</p>`;
+            text += `<p>Wisdom: ${stats.karma.wisdom}/10 | Courage: ${stats.karma.courage}/10 | Self-Control: ${stats.karma.selfControl}/10</p>`;
+            text += `</div>`;
+            
+            text += `<div style="border-top: 2px solid #00ff00; padding-top: 20px; margin-top: 20px;">`;
+            text += `<h3 style="color: #ff00ff;">FINAL GUNAS:</h3>`;
+            text += `<p>Sattva: ${stats.gunas.sattva} | Rajas: ${stats.gunas.rajas} | Tamas: ${stats.gunas.tamas}</p>`;
+            text += `</div>`;
+            
+            text += `<div style="border-top: 2px solid #00ff00; padding-top: 20px; margin-top: 20px;">`;
+            text += `<h3 style="color: #fcd34d;">WEAPONS: </h3><p>${stats.weapons.join(', ') || 'None'}</p>`;
+            text += `<h3 style="color: #00ffff; margin-top: 15px;">SAGE WISDOM: </h3><p>${stats.sageLesson.join(', ') || 'None'}</p>`;
+            text += `</div>`;
+            
+            text += `<div style="border-top: 2px solid #fcd34d; padding-top: 20px; margin-top: 20px; text-align: center;">`;
+            text += `<h3 style="color: #fcd34d; font-size: 1.5em;">DHARMA SCORE: ${dharmaScore}</h3>`;
+            
+            if (dharmaScore >= 150) {
+                text += `<p style="color: #fcd34d; font-size: 1.2em;">🌟 PERFECT DHARMA 🌟</p>`;
+                text += `<p>You embodied dharma completely!</p>`;
+            } else if (dharmaScore >= 100) {
+                text += `<p style="color: #00ff00; font-size: 1.2em;">✨ EXCELLENT PATH ✨</p>`;
+                text += `<p>Dharmic path with wisdom!</p>`;
+            } else if (dharmaScore >= 50) {
+                text += `<p style="color: #00ffff;">⭐ GOOD JOURNEY ⭐</p>`;
+                text += `<p>Learned dharma through journey!</p>`;
+            } else {
+                text += `<p style="color: #ffaa00;">📿 LEARNING PATH 📿</p>`;
+                text += `<p>Play again to deepen understanding!</p>`;
+            }
+            
+            text += `<p style="color: #fcd34d; font-size: 1.3em; margin-top: 30px;">॥ यतो धर्मस्ततो जयः ॥</p>`;
+            text += `<p style="color: #00ff00;">WHERE DHARMA, THERE VICTORY</p>`;
+            text += `<p style="margin-top: 20px; color: #00ffff;">May these lessons guide your path!</p>`;
+            text += `</div></div>`;
+            
+            return text;
+        }
+
+        // MAIN NAV
+        function showMainMenu() {
+            document.getElementById('mainMenu').classList.remove('hidden');
+            document.getElementById('characterSelect').classList.add('hidden');
+            document.getElementById('characterIntro').classList.add('hidden');
+            document.getElementById('gameScreen').classList.add('hidden');
+        }
+
+        function showCharacterSelect() {
+            document.getElementById('mainMenu').classList.add('hidden');
+            document.getElementById('characterSelect').classList.remove('hidden');
+        }
+
+        function selectCharacter(char) {
+            gameState.character = char;
+            gameState.currentChapter = -4; // START WITH TUTORIAL
+            showCharacterIntro(char);
+        }
+
+        function showCharacterIntro(char) {
+            const intro = characterIntros[char];
+            document.getElementById('introTitle').textContent = intro.title;
+            document.getElementById('introContent').innerHTML = intro.intro + 
+                `<button class="btn mt-20" onclick="startGame()">${intro.startButton}</button>`;
+            document.getElementById('characterSelect').classList.add('hidden');
+            document.getElementById('characterIntro').classList.remove('hidden');
+        }
+
+        function startGame() {
+            document.getElementById('characterIntro').classList.add('hidden');
+            document.getElementById('gameScreen').classList.remove('hidden');
+            document.getElementById('currentCharacter').textContent = gameState.character.toUpperCase();
+            updateAllDisplays();
+            loadChapter(-4); // START WITH TUTORIAL!
+        }
+
+        function loadChapter(chapterId) {
+            const chapters = getAllChapters(gameState.character);
+            const chapter = chapters.find(c => c.id === chapterId);
+            if (!chapter) return;
+
+            gameState.currentChapter = chapterId;
+            gameState.location = chapter.location;
+
+            document.getElementById('chapterTitle').textContent = chapter.title;
+            document.getElementById('locationDisplay').textContent = chapter.location;
+
+            let html = '';
+            
+            if (chapter.verse) {
+                html += `<div class="verse">
+                    <div class="verse-sanskrit">${chapter.verse.sanskrit}</div>
+                    <div class="verse-translation">${chapter.verse.translation}</div>
+                </div>`;
+            }
+
+            if (chapter.sageTeaching) {
+                html += `<div class="sage-teaching">
+                    <h3>🕉️ SAGE ${chapter.sageTeaching.sage.toUpperCase()}</h3>
+                    <p style="color: #00ff00;">${chapter.sageTeaching.teaching}</p>
+                </div>`;
+            }
+
+            html += `<div class="story-text">${chapter.text}</div>`;
+
+            if (chapter.battle && chapter.battle.description) {
+                html += `<div class="warning-box">
+                    <h3>⚔️ BATTLE!</h3>
+                    <p style="color: #00ff00;">${chapter.battle.description}</p>
+                </div>`;
+            }
+
+            html += '<div class="choices">';
+            chapter.choices.forEach((choice, idx) => {
+                const disabled = choice.requiredLesson && !gameState.sageLesson.includes(choice.requiredLesson);
+                html += `<button class="choice-btn" onclick="makeChoice(${chapterId}, ${idx})" ${disabled ? 'disabled' : ''}>
+                    ${choice.text}${disabled ? ' 🔒 REQUIRES: ' + choice.requiredLesson : ''}
+                </button>`;
+            });
+            html += '</div>';
+
+            document.getElementById('storyContent').innerHTML = html;
+            updateAllDisplays();
+        }
+
+        function makeChoice(chapterId, choiceIdx) {
+            const chapters = getAllChapters(gameState.character);
+            const chapter = chapters.find(c => c.id === chapterId);
+            const choice = chapter.choices[choiceIdx];
+
+            if (choice.effects) {
+                for (let key in choice.effects) {
+                    if (gameState.resources[key] !== undefined) {
+                        gameState.resources[key] = Math.max(0, Math.min(100, gameState.resources[key] + choice.effects[key]));
+                    } else if (gameState.gunas[key] !== undefined) {
+                        gameState.gunas[key] = Math.max(0, gameState.gunas[key] + choice.effects[key]);
+                    } else if (gameState.karma[key] !== undefined) {
+                        gameState.karma[key] = Math.max(0, Math.min(10, gameState.karma[key] + choice.effects[key]));
+                    }
+                }
+            }
+
+            if (choice.weapons) {
+                choice.weapons.forEach(w => {
+                    if (!gameState.weapons.includes(w)) gameState.weapons.push(w);
+                });
+            }
+
+            if (choice.unlocks) {
+                choice.unlocks.forEach(u => {
+                    if (!gameState.sageLesson.includes(u)) gameState.sageLesson.push(u);
+                });
+            }
+
+            gameState.choices.push({chapter: chapterId, choice: choiceIdx});
+
+            if (choice.failState) {
+                showFailState(choice.lesson, choice.outcome);
+            } else if (choice.battle || (chapter.battle && (choice.text.includes('Fight') || choice.text.includes('fight') || choice.text.includes('BATTLE')))) {
+                showBattleOutcome(choice.outcome, () => {
+                    // FIXED: Check choice.battle first, then fall back to chapter.battle
+                    const battleConfig = choice.battle || chapter.battle;
+                    if (battleConfig && !battleConfig.skipBattle) {
+                        startBattle(battleConfig);
+                    } else {
+                        proceedToNextChapter(choice);
+                    }
+                });
+            } else {
+                showChoiceOutcome(choice.outcome, () => {
+                    proceedToNextChapter(choice);
+                });
+            }
+
+            updateAllDisplays();
+        }
+
+        function showChoiceOutcome(outcome, callback) {
+            let html = `<div class="feedback">
+                <h3>OUTCOME:</h3>
+                <p style="color: #00ff00; line-height: 1.8;">${outcome}</p>
+                <button class="btn mt-20">CONTINUE →</button>
+            </div>`;
+            document.getElementById('storyContent').insertAdjacentHTML('beforeend', html);
+            document.querySelector('#storyContent .feedback .btn').onclick = callback;
+        }
+
+        function showBattleOutcome(outcome, callback) {
+            let html = `<div class="battle-result">
+                <h3 style="color: #ff0000;">⚔️ PREPARING FOR BATTLE!</h3>
+                <p style="color: #00ff00; margin: 15px 0;">${outcome}</p>
+                <button class="btn mt-20">ENTER BATTLE →</button>
+            </div>`;
+            document.getElementById('storyContent').insertAdjacentHTML('beforeend', html);
+            document.querySelector('#storyContent .battle-result .btn').onclick = callback;
+        }
+
+        function showFailState(lesson, outcome) {
+            let html = `<div class="death-screen">
+                <h2>⚠️ PATH BLOCKED</h2>
+                <p style="color: #00ff00; margin: 20px 0;">${outcome}</p>
+                <div class="lesson">
+                    <h3 style="color: #00ffff;">📿 LESSON:</h3>
+                    <p style="color: #00ff00;">${lesson}</p>
+                </div>
+                <button class="btn mt-20" onclick="loadChapter(${gameState.currentChapter})">TRY AGAIN</button>
+            </div>`;
+            document.getElementById('storyContent').innerHTML = html;
+        }
+
+        function proceedToNextChapter(choice) {
+            if (choice.isEnding) return;
+            
+            const nextChapter = gameState.currentChapter + 1;
+            const chapters = getAllChapters(gameState.character);
+            
+            if (chapters.find(c => c.id === nextChapter)) {
+                loadChapter(nextChapter);
+            }
+        }
+
+        function startBattle(battleConfig) {
+            if (!battleConfig) return;
+
+            battleState.active = true;
+            battleState.currentChapter = gameState.currentChapter;
+            battleState.playerHealth = 100 + (gameState.resources.favor / 2);
+            
+            if (battleConfig.difficulty === 'tutorial') {
+                battleState.enemyHealth = 50;
+            } else if (battleConfig.difficulty === 'ultimate') {
+                battleState.enemyHealth = 200;
+            } else if (battleConfig.difficulty === 'very_hard') {
+                battleState.enemyHealth = 150;
+            } else if (battleConfig.difficulty === 'hard') {
+                battleState.enemyHealth = 120;
+            } else {
+                battleState.enemyHealth = 100;
+            }
+            
+            battleState.round = 1;
+            battleState.battleLog = [];
+
+            let html = `<div class="battle-screen">
+                <h2 class="battle-title">⚔️ ${battleConfig.enemy.toUpperCase()} ⚔️</h2>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div>
+                        <h3 style="color: #00ff00; text-align: center;">YOU</h3>
+                        <div class="resource-bar" style="margin: 10px 0;">
+                            <div class="resource-fill energy-fill" id="battlePlayerHealth" style="width: 100%"></div>
+                        </div>
+                        <p style="text-align: center; color: #00ff00;" id="battlePlayerHealthText">HP: ${battleState.playerHealth.toFixed(0)}</p>
+                    </div>
+                    <div>
+                        <h3 style="color: #ff0000; text-align: center;">${battleConfig.enemy.toUpperCase()}</h3>
+                        <div class="resource-bar" style="margin: 10px 0;">
+                            <div class="resource-fill" id="battleEnemyHealth" style="width: 100%; background: linear-gradient(90deg, #ff0000, #cc0000);"></div>
+                        </div>
+                        <p style="text-align: center; color: #ff0000;" id="battleEnemyHealthText">HP: ${battleState.enemyHealth.toFixed(0)}</p>
+                    </div>
+                </div>
+                <div class="weapon-selection">
+                    <h3>SELECT WEAPON:</h3>
+                    <div class="weapon-grid">
+                        ${gameState.weapons.map(w => `
+                            <button class="astra-btn" onclick="playerAttack('${w}')">${astras[w].name}</button>
+                        `).join('')}
+                    </div>
+                    <button class="defend-btn" onclick="playerDefend()">🛡️ DEFEND (-50% damage)</button>
+                </div>
+                <div class="battle-log" id="battleLog">
+                    <div class="log-entry">Battle begins! Round ${battleState.round}</div>
+                </div>
+            </div>`;
+
+            document.getElementById('storyContent').innerHTML = html;
+        }
+
+        function addBattleLog(message, color = '#00ff00') {
+            const log = document.getElementById('battleLog');
+            if (log) {
+                const entry = document.createElement('div');
+                entry.className = 'log-entry';
+                entry.style.color = color;
+                entry.textContent = message;
+                log.appendChild(entry);
+                log.scrollTop = log.scrollHeight;
+            }
+        }
+
+        function playerAttack(weaponName) {
+            const weapon = astras[weaponName];
+            const karmaBonus = (gameState.karma.courage + gameState.karma.duty) * 2;
+            const energyPenalty = gameState.resources.energy < 30 ? 0.7 : 1;
+            const tamasPenalty = Math.max(0, 1 - (gameState.gunas.tamas * 0.03));
+            
+            let damage = weapon.power + karmaBonus;
+            damage *= energyPenalty * tamasPenalty;
+            damage *= (0.85 + Math.random() * 0.3);
+            
+            if (battleState.enemyDefending) {
+                damage *= 0.5;
+                addBattleLog(`Enemy defending! Reduced damage!`, '#ffaa00');
+            }
+            
+            battleState.enemyHealth -= damage;
+            addBattleLog(`You attack with ${weapon.name}! Damage: ${damage.toFixed(1)}`, '#00ff00');
+            
+            updateBattleDisplay();
+            
+            if (battleState.enemyHealth <= 0) {
+                battleVictory();
+                return;
+            }
+            
+            setTimeout(enemyTurn, 1000);
+        }
+
+        function playerDefend() {
+            battleState.playerDefending = true;
+            addBattleLog('You take defensive stance!', '#00ffff');
+            setTimeout(enemyTurn, 1000);
+        }
+
+        function enemyTurn() {
+            battleState.round++;
+            
+            const shouldDefend = Math.random() < 0.25;
+            if (shouldDefend) {
+                battleState.enemyDefending = true;
+                addBattleLog('Enemy defends!', '#ffaa00');
+            } else {
+                battleState.enemyDefending = false;
+                const chapters = getAllChapters(gameState.character);
+                const chapter = chapters.find(c => c.id === battleState.currentChapter);
+                const enemyWeaponName = chapter.battle.enemyWeapon;
+                const enemyWeapon = demonWeapons[enemyWeaponName];
+                
+                let damage = enemyWeapon.power * (0.85 + Math.random() * 0.3);
+                
+                if (battleState.playerDefending) {
+                    damage *= 0.5;
+                    addBattleLog('You blocked damage!', '#00ffff');
+                }
+                
+                battleState.playerHealth -= damage;
+                addBattleLog(`Enemy attacks! Damage: ${damage.toFixed(1)}`, '#ff0000');
+            }
+            
+            battleState.playerDefending = false;
+            
+            updateBattleDisplay();
+            
+            if (battleState.playerHealth <= 0) {
+                battleDefeat();
+                return;
+            }
+            
+            addBattleLog(`--- Round ${battleState.round} ---`, '#fcd34d');
+        }
+
+        function updateBattleDisplay() {
+            const playerHealthBar = document.getElementById('battlePlayerHealth');
+            const enemyHealthBar = document.getElementById('battleEnemyHealth');
+            const playerHealthText = document.getElementById('battlePlayerHealthText');
+            const enemyHealthText = document.getElementById('battleEnemyHealthText');
+            
+            if (playerHealthBar) {
+                const playerPercent = Math.max(0, (battleState.playerHealth / (100 + gameState.resources.favor/2)) * 100);
+                playerHealthBar.style.width = playerPercent + '%';
+                playerHealthText.textContent = `HP: ${Math.max(0, battleState.playerHealth).toFixed(0)}`;
+            }
+            
+            if (enemyHealthBar) {
+                const chapters = getAllChapters(gameState.character);
+                const chapter = chapters.find(c => c.id === battleState.currentChapter);
+                let maxHealth = 100;
+                if (chapter.battle.difficulty === 'tutorial') maxHealth = 50;
+                else if (chapter.battle.difficulty === 'ultimate') maxHealth = 200;
+                else if (chapter.battle.difficulty === 'very_hard') maxHealth = 150;
+                else if (chapter.battle.difficulty === 'hard') maxHealth = 120;
+                
+                const enemyPercent = Math.max(0, (battleState.enemyHealth / maxHealth) * 100);
+                enemyHealthBar.style.width = enemyPercent + '%';
+                enemyHealthText.textContent = `HP: ${Math.max(0, battleState.enemyHealth).toFixed(0)}`;
+            }
+        }
+
+        function battleVictory() {
+            gameState.battleStats.wins++;
+            gameState.resources.favor += 20;
+            gameState.karma.courage += 1;
+            
+            addBattleLog('=== VICTORY! ===', '#fcd34d');
+            
+            setTimeout(() => {
+                let html = `<div class="battle-result">
+                    <h2 style="color: #00ff00;">🎉 VICTORY! 🎉</h2>
+                    <p style="color: #00ff00; margin: 20px 0; font-size: 1.2em;">Enemy defeated!</p>
+                    <p style="color: #fcd34d;">+20 Divine Favor, +1 Courage</p>
+                    <button class="btn mt-20" onclick="loadChapter(${gameState.currentChapter + 1})">CONTINUE →</button>
+                </div>`;
+                document.getElementById('storyContent').innerHTML = html;
+                battleState.active = false;
+                updateAllDisplays();
+            }, 2000);
+        }
+
+        function battleDefeat() {
+            gameState.battleStats.losses++;
+            gameState.resources.energy -= 20;
+            
+            addBattleLog('=== DEFEATED ===', '#ff0000');
+            
+            setTimeout(() => {
+                let html = `<div class="death-screen">
+                    <h2>💀 DEFEATED</h2>
+                    <p style="color: #00ff00; margin: 20px 0;">Fallen in battle!</p>
+                    <div class="lesson">
+                        <h3 style="color: #00ffff;">📿 LESSON:</h3>
+                        <p style="color: #00ff00;">Victory needs courage AND strategy!</p>
+                    </div>
+                    <button class="btn mt-20" onclick="loadChapter(${gameState.currentChapter}); battleState.active = false;">TRY AGAIN</button>
+                </div>`;
+                document.getElementById('storyContent').innerHTML = html;
+                battleState.active = false;
+            }, 2000);
+        }
+
+        function updateAllDisplays() {
+            updateResourceDisplay('energy', gameState.resources.energy);
+            updateResourceDisplay('favor', gameState.resources.favor);
+            updateResourceDisplay('tapas', gameState.resources.tapas);
+            
+            document.getElementById('sattvaValue').textContent = gameState.gunas.sattva;
+            document.getElementById('rajasValue').textContent = gameState.gunas.rajas;
+            document.getElementById('tamasValue').textContent = gameState.gunas.tamas;
+            
+            updateKarmaDisplay();
+            updateWeaponsDisplay();
+            updateLessonsDisplay();
+        }
+
+        function updateResourceDisplay(resource, value) {
+            const valueEl = document.getElementById(resource + 'Value');
+            const barEl = document.getElementById(resource + 'Bar');
+            const labelEl = document.getElementById(resource + 'Label');
+            
+            if (valueEl) valueEl.textContent = Math.round(value);
+            if (barEl) barEl.style.width = value + '%';
+            
+            if (labelEl && value < 30) {
+                labelEl.classList.add('low-resource');
+            } else if (labelEl) {
+                labelEl.classList.remove('low-resource');
+            }
+        }
+
+        function updateKarmaDisplay() {
+            const el = document.getElementById('karmaDisplay');
+            if (!el) return;
+            
+            el.innerHTML = Object.entries(gameState.karma)
+                .map(([key, val]) => `<div class="stat-line">${key}: ${val}/10</div>`)
+                .join('');
+        }
+
+        function updateWeaponsDisplay() {
+            const el = document.getElementById('weaponsDisplay');
+            if (!el) return;
+            
+            if (gameState.weapons.length === 0) {
+                el.innerHTML = '<p style="color: #ff00ff; font-style: italic;">NONE YET</p>';
+            } else {
+                el.innerHTML = gameState.weapons
+                    .map(w => `<div style="color: #fcd34d; margin: 5px 0;">⚔️ ${astras[w].name}</div>`)
+                    .join('');
+            }
+        }
+
+        function updateLessonsDisplay() {
+            const el = document.getElementById('lessonsDisplay');
+            if (!el) return;
+            
+            if (gameState.sageLesson.length === 0) {
+                el.innerHTML = '<p style="color: #00ffff; font-style: italic;">NONE YET</p>';
+            } else {
+                el.innerHTML = gameState.sageLesson
+                    .map(l => `<div style="color: #00ffff; margin: 5px 0;">📿 ${l}</div>`)
+                    .join('');
+            }
+        }
+
+        function saveGame() {
+            localStorage.setItem('ramayanaGameSave', JSON.stringify(gameState));
+            alert('Game saved!');
+        }
+
+        function continueGame() {
+            const saved = localStorage.getItem('ramayanaGameSave');
+            if (saved) {
+                gameState = JSON.parse(saved);
+                showMainMenu();
+                document.getElementById('mainMenu').classList.add('hidden');
+                document.getElementById('gameScreen').classList.remove('hidden');
+                loadChapter(gameState.currentChapter);
+            }
+        }
+
+        function showGlossary() {
+            document.getElementById('glossaryModal').classList.add('active');
+        }
+
+        function showHowToPlay() {
+            document.getElementById('howToPlayModal').classList.add('active');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        function loadGlossary() {
+            let html = '';
+            for (let key in glossary) {
+                const entry = glossary[key];
+                html += `<div class="glossary-entry">
+                    <div class="glossary-term">${entry.term}</div>
+                    <div class="glossary-pronunciation">(${entry.pronunciation})</div>
+                    <div class="glossary-definition">${entry.definition}</div>
+                </div>`;
+            }
+            document.getElementById('glossaryContent').innerHTML = html;
+        }
+
+        function loadHowToPlay() {
+            let html = `
+                <div style="color: #00ff00; line-height: 1.8;">
+                    <h3 style="color: #fcd34d; margin: 20px 0;">🎮 GAMEPLAY</h3>
+                    <p><strong>1. TUTORIAL:</strong> Complete 4 interactive chapters to learn all mechanics!</p>
+                    <p><strong>2. STORY:</strong> Read carefully and make dharmic choices</p>
+                    <p><strong>3. RESOURCES:</strong> Energy, Divine Favor, Tapas</p>
+                    
+                    <h3 style="color: #fcd34d; margin: 20px 0;">⚡ GUNAS</h3>
+                    <p><strong style="color: #00ff00;">SATTVA</strong> - Purity (GOOD!)</p>
+                    <p><strong style="color: #ffaa00;">RAJAS</strong> - Passion (MIXED)</p>
+                    <p><strong style="color: #ff0000;">TAMAS</strong> - Ignorance (BAD! -3% battle per point!)</p>
+                    
+                    <h3 style="color: #fcd34d; margin: 20px 0;">📿 KARMA</h3>
+                    <p>Build 6 virtues: Truth, Duty, Compassion, Wisdom, Courage, Self-Control</p>
+                    <p>Each point gives +2 battle damage!</p>
+                    
+                    <h3 style="color: #fcd34d; margin: 20px 0;">⚔️ COMBAT</h3>
+                    <p>Use divine astras! Defend reduces 50% damage!</p>
+                    <p>⚠️ Keep Energy above 30 or fight at 70% strength!</p>
+                    
+                    <h3 style="color: #fcd34d; margin: 20px 0;">⭐ HISTORICAL ACCURACY</h3>
+                    <p>Choices marked with ⭐ match Valmiki's Ramayana!</p>
+                    
+                    <p style="color: #fcd34d; text-align: center; margin-top: 30px; font-size: 1.2em;">
+                        ॥ यतो धर्मस्ततो जयः ॥<br>
+                        WHERE DHARMA, THERE VICTORY
+                    </p>
+                </div>
+            `;
+            document.getElementById('howToPlayContent').innerHTML = html;
+        }
+
+        window.onload = function() {
+            const saved = localStorage.getItem('ramayanaGameSave');
+            if (saved) {
+                document.getElementById('continueBtn').style.display = 'block';
+            }
+            loadGlossary();
+            loadHowToPlay();
+        };
+    </script>
+</body>
+</html>
